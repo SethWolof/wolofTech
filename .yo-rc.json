@@ -1,0 +1,24 @@
+{
+  "generator-jhipster": {
+    "baseName": "GEN",
+    "packageName": "com.gen",
+    "packageFolder": "com/gen",
+    "authenticationType": "session",
+    "hibernateCache": "ehcache",
+    "clusteredHttpSession": "hazelcast",
+    "websocket": "spring-websocket",
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "prodDatabaseType": "mysql",
+    "searchEngine": "elasticsearch",
+    "useSass": false,
+    "buildTool": "maven",
+    "frontendBuilder": "grunt",
+    "enableTranslation": true,
+    "enableSocialSignIn": false,
+    "rememberMeKey": "0e4bf6fcb0a4fe1d4d2fed55ffe42dd6adc848d3",
+    "testFrameworks": [
+      "protractor"
+    ]
+  }
+}
