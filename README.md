@@ -1,84 +1,88 @@
-# GEN
+# Heroku Buildpack for Node.js
 
-This application was generated using JHipster, you can find documentation and help at [https://jhipster.github.io](https://jhipster.github.io).
+![nodesjs](https://cloud.githubusercontent.com/assets/51578/8882955/3f0c3980-3219-11e5-8666-bc9c926a7356.jpg)
 
-Before you can build this project, you must install and configure the following dependencies on your machine:
+This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Node.js apps.
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
+[![Build Status](https://travis-ci.org/heroku/heroku-buildpack-nodejs.svg)](https://travis-ci.org/heroku/heroku-buildpack-nodejs)
 
-After installing Node, you should be able to run the following command to install development tools (like
-[Bower][] and [BrowserSync][]). You will only need to run this command when dependencies change in package.json.
+## Documentation
 
-    npm install
+For more information about using this Node.js buildpack on Heroku, see these Dev Center articles:
 
-We use [Grunt][] as our build system. Install the grunt command-line tool globally with:
+- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
+- [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/nodejs)
 
-    npm install -g grunt-cli
+For more general information about buildpacks on Heroku:
 
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
+- [Buildpacks](https://devcenter.heroku.com/articles/buildpacks)
+- [Buildpack API](https://devcenter.heroku.com/articles/buildpack-api)
 
-    mvn
-    grunt
+## Locking to a buildpack version
 
-Bower is used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in `bower.json`. You can also run `bower update` and `bower install` to manage dependencies.
-Add the `-h` flag on any command to see how you can use it. For example, `bower update -h`.
+In production, you frequently want to lock all of your dependencies - including
+buildpacks - to a specific version. That way, you can regularly update and
+test them, upgrading with confidence.
 
-# Building for production
+First, find the version you want from
+[the list of buildpack versions](https://github.com/heroku/heroku-buildpack-nodejs/releases).
+Then, specify that version with `buildpacks:set`:
 
-To optimize the GEN client for production, run:
+```
+heroku buildpacks:set https://github.com/heroku/heroku-buildpack-nodejs#v83 -a my-app
+```
 
-    mvn -Pprod clean package
+If you have trouble upgrading to the latest version of the buildpack, please
+open a support ticket at [help.heroku.com](https://help.heroku.com/) so we can assist.
 
-This will concatenate and minify CSS and JavaScript files. It will also modify `index.html` so it references
-these new files.
+### Chain Node with multiple buildpacks
 
-To ensure everything worked, run:
+This buildpack automatically exports node, npm, and any node_modules binaries
+into the `$PATH` for easy use in subsequent buildpacks.
 
-    java -jar target/*.war --spring.profiles.active=prod
+## Feedback
 
-Then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
+Having trouble? Dig it? Feature request?
 
-# Testing
+- [help.heroku.com](https://help.heroku.com/)
+- [@hunterloftis](http://twitter.com/hunterloftis)
+- [github issues](https://github.com/heroku/heroku-buildpack-nodejs/issues)
 
-Unit tests are run by [Karma][] and written with [Jasmine][]. They're located in `src/test/javascript` and can be run with:
+## Hacking
 
-    grunt test
+To make changes to this buildpack, fork it on Github.
+Push up changes to your fork, then create a new Heroku app to test it,
+or configure an existing app to use your buildpack:
 
-UI end-to-end tests are powered by [Protractor][], which is built on top of WebDriverJS. They're located in `src/test/javascript/e2e`
-and can be run by starting Spring Boot in one terminal (`mvn spring-boot:run`) and running the tests (`grunt itest`) in a second one.
+```
+# Create a new Heroku app that uses your buildpack
+heroku create --buildpack <your-github-url>
 
-# Continuous Integration
+# Configure an existing Heroku app to use your buildpack
+heroku buildpacks:set <your-github-url>
 
-To setup this project in Jenkins, use the following configuration:
+# You can also use a git branch!
+heroku buildpacks:set <your-github-url>#your-branch
+```
 
-* Project name: `GEN`
-* Source Code Management
-    * Git Repository: `git@github.com:xxxx/GEN.git`
-    * Branches to build: `*/master`
-    * Additional Behaviours: `Wipe out repository & force clone`
-* Build Triggers
-    * Poll SCM / Schedule: `H/5 * * * *`
-* Build
-    * Invoke Maven / Tasks: `-Pprod clean package`
-    * Execute Shell / Command:
-        ````
-        mvn spring-boot:run &
-        bootPid=$!
-        sleep 30s
-        grunt itest
-        kill $bootPid
-        ````
-* Post-build Actions
-    * Publish JUnit test result report / Test Report XMLs: `build/test-results/*.xml,build/reports/e2e/*.xml`
+## Tests
 
-[JHipster]: https://jhipster.github.io/
-[Node.js]: https://nodejs.org/
-[Bower]: http://bower.io/
-[Grunt]: http://gruntjs.com/
-[BrowserSync]: http://www.browsersync.io/
-[Karma]: http://karma-runner.github.io/
-[Jasmine]: http://jasmine.github.io/2.0/introduction.html
-[Protractor]: https://angular.github.io/protractor/
+The buildpack tests use [Docker](https://www.docker.com/) to simulate
+Heroku's Cedar and Cedar-14 containers.
+
+To run the test suite:
+
+```
+make test
+```
+
+Or to just test in cedar or cedar-14:
+
+```
+make test-cedar-10
+make test-cedar-14
+```
+
+The tests are run via the vendored
+[shunit2](http://shunit2.googlecode.com/svn/trunk/source/2.1/doc/shunit2.html)
+test framework.
